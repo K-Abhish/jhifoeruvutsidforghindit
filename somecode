@@ -1,0 +1,59 @@
+import glob
+import pandas as pd
+import os
+
+os.chdir('E:/Internship/aclImdb/train/pos/')
+fileslist = []
+review = []
+for files in os.listdir('E:/Internship/aclImdb/train/pos/'):
+    fileslist.append(files)
+    x = open(files, 'r', errors = 'ignore')
+    y = x.read()
+    review.append(y)
+df = pd.DataFrame(fileslist, columns = ['filename'])
+df['reviews'] = review
+df['label'] = 1
+print(df.head())
+df.to_csv('E:/positive_train.csv')
+
+os.chdir('E:/Internship/aclImdb/train/neg/')
+fileslist = []
+review = []
+for files in os.listdir('E:/Internship/aclImdb/train/neg/'):
+    fileslist.append(files)
+    x = open(files, 'r', errors = 'ignore')
+    y = x.read()
+    review.append(y)
+df = pd.DataFrame(fileslist, columns = ['filename'])
+df['reviews'] = review
+df['label'] = 0
+print(df.head())
+df.to_csv('E:/negative_train.csv')
+
+os.chdir('E:/Internship/aclImdb/test/pos/')
+fileslist = []
+review = []
+for files in os.listdir('E:/Internship/aclImdb/test/pos/'):
+    fileslist.append(files)
+    x = open(files, 'r', errors = 'ignore')
+    y = x.read()
+    review.append(y)
+df = pd.DataFrame(fileslist, columns = ['filename'])
+df['reviews'] = review
+df['label'] = 1
+print(df.head())
+df.to_csv('E:/positive_test.csv')
+
+os.chdir('E:/Internship/aclImdb/test/neg/')
+fileslist = []
+review = []
+for files in os.listdir('E:/Internship/aclImdb/test/neg/'):
+    fileslist.append(files)
+    x = open(files, 'r', errors = 'ignore')
+    y = x.read()
+    review.append(y)
+df = pd.DataFrame(fileslist, columns = ['filename'])
+df['reviews'] = review
+df['label'] = 0
+print(df.head())
+df.to_csv('E:/negative_test.csv')
