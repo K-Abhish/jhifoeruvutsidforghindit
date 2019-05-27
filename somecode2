@@ -1,0 +1,39 @@
+import pandas as pd
+from sklearn import svm
+
+
+
+train_data = pd.read_csv('E:/train_reviews.csv')
+print(train_data.head())
+X = train_data['reviews']
+y = train_data['label']
+from sklearn.feature_extraction.text import CountVectorizer
+count_vect = CountVectorizer()
+X_train_counts = count_vect.fit_transform(X)
+print(X_train_counts.shape)
+
+
+from sklearn.feature_extraction.text import TfidfTransformer
+tfidf_transformer = TfidfTransformer()
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+X_train_tfidf.shape
+
+from sklearn.naive_bayes import MultinomialNB
+clf = MultinomialNB().fit(X_train_tfidf, y)
+
+
+import numpy as np
+from sklearn.pipeline import Pipeline
+
+text_clf = Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', MultinomialNB())])
+
+text_clf = text_clf.fit(X, y)
+
+
+test_data = pd.read_csv('E:/test_reviews.csv')
+print(test_data.head())
+X1 = test_data['reviews']
+y1 = test_data['label']
+
+predicted = text_clf.predict(X1)
+print(np.mean(predicted == y1))
