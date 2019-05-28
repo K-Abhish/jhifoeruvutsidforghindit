@@ -1,39 +1,35 @@
 import pandas as pd
+import numpy as np
 from sklearn import svm
-
-
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import SGDClassifier
 
 train_data = pd.read_csv('E:/train_reviews.csv')
-print(train_data.head())
 X = train_data['reviews']
-y = train_data['label']
-from sklearn.feature_extraction.text import CountVectorizer
-count_vect = CountVectorizer()
-X_train_counts = count_vect.fit_transform(X)
-print(X_train_counts.shape)
-
-
-from sklearn.feature_extraction.text import TfidfTransformer
-tfidf_transformer = TfidfTransformer()
-X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
-X_train_tfidf.shape
-
-from sklearn.naive_bayes import MultinomialNB
-clf = MultinomialNB().fit(X_train_tfidf, y)
-
-
-import numpy as np
-from sklearn.pipeline import Pipeline
-
-text_clf = Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', MultinomialNB())])
-
-text_clf = text_clf.fit(X, y)
-
-
+Y = train_data['label']
 test_data = pd.read_csv('E:/test_reviews.csv')
-print(test_data.head())
 X1 = test_data['reviews']
 y1 = test_data['label']
 
-predicted = text_clf.predict(X1)
+count_words = CountVectorizer()
+X_train_counts = count_words.fit_transform(X)
+
+tfidf_transformer = TfidfTransformer()
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+#print(X_train_tfidf.shape)
+my_classifier = MultinomialNB().fit(X_train_tfidf, y)
+
+my_classifier1 = Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', MultinomialNB())])
+my_classifier1 = text_clf.fit(X, y)
+predicted = my_classifier1.predict(X1)
 print(np.mean(predicted == y1))
+
+my_classifier2 = Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()),
+                         ('clf-svm', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, n_iter=5, random_state=42))])
+
+my_classifier2 = my_classifier2.fit(X, y)
+predicted1 = my_classifier2.predict(X1)
+np.mean(predicted1 == y1)
